@@ -1,0 +1,39 @@
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nodejsapp
+  namespace: default
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: nodeserver
+        image: public.ecr.aws/s8m2y9o0/frontend:latest
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodejsapp
+  namespace: default
+spec:
+  selector:
+    app: frontend
+  type: LoadBalancer
+  ports:
+  - name: http
+    port: 8000
+    targetPort: 80
+

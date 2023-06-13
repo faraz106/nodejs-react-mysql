@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysqldb
+spec:
+  replicas: 1
+  serviceName: mysql-headless
+  selector:
+    matchLabels:
+      app: mysqldb
+  template:
+    metadata:
+      labels:
+        app: mysqldb
+    spec:
+      containers:
+        - name: mysqldb
+          image: public.ecr.aws/s8m2y9o0/mysqldb:latest
+          ports:
+            - name: tcp
+              protocol: TCP
+              containerPort: 3306
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom: 
+               secretKeyRef: 
+                key: MYSQLDB_ROOT_PASSWORD
+                name: mysecret
+            - name: MYSQL_USER
+              valueFrom: 
+               secretKeyRef: 
+                key: MYSQLDB_USER
+                name: mysecret
+            - name: MYSQL_DATABASE
+              valueFrom: 
+               secretKeyRef: 
+                key: MYSQLDB_DATABASE
+                name: mysecret
+    
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        storageClassName: standard
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
