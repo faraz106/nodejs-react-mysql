@@ -26,17 +26,6 @@ spec:
                secretKeyRef: 
                 key: MYSQLDB_ROOT_PASSWORD
                 name: mysecret
-            - name: MYSQL_USER
-              valueFrom: 
-               secretKeyRef: 
-                key: MYSQLDB_USER
-                name: mysecret
-            - name: MYSQL_DATABASE
-              valueFrom: 
-               secretKeyRef: 
-                key: MYSQLDB_DATABASE
-                name: mysecret
-    
           volumeMounts:
             - name: data
               mountPath: /var/lib/mysql
@@ -44,9 +33,7 @@ spec:
     - metadata:
         name: data
       spec:
-        storageClassName: standard
-        accessModes:
-          - ReadWriteOnce
+        accessModes: [ "ReadWriteOnce" ]
         resources:
           requests:
             storage: 1Gi
